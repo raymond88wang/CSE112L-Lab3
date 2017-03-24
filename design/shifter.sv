@@ -8,8 +8,8 @@ module shifter(
 	logic [31:0] Rm1, Rd1, Rm2, Rd2;
 	logic [3:0] flags1, flags2;
 	
-    regshift regshift(Instr[11:8], Instr[6:5], Rm1, Rd1, flags1);
-	immshift immshift(Rs, Instr[6:5], Rm2, Rd2, flags2);
+    regshift regshift(Rs, Instr[6:5], Rm1, Rd1, flags1);
+	immshift immshift(Instr[11:8], Instr[6:5], Rm2, Rd2, flags2);
 	
 	always_comb
 	begin

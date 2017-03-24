@@ -8,18 +8,19 @@ module arm(
     input logic [31:0] ReadData);
 
     logic [3:0] ALUFlags;
-    logic RegWrite, ALUSrc, MemtoReg, PCSrc, ShifterSrc;
-    logic [1:0] RegSrc, ImmSrc, ALUControl;
+    logic RegWrite, ALUSrc, MemtoReg, PCSrc, ShifterSrc, Branch;
+    logic [1:0] RegSrc, ImmSrc;
+	logic [3:0] ALUControl;
 
-    controller c(clk, reset, Instr[31:5], ALUFlags,
+    controller c(clk, reset, Instr[31:0], ALUFlags,
         RegSrc, RegWrite, ImmSrc,
         ALUSrc, ShifterSrc, ALUControl,
-        MemWrite, MemtoReg, PCSrc, be);
+        MemWrite, MemtoReg, PCSrc, be, branch);
     datapath dp(clk, reset,
         RegSrc, RegWrite, ImmSrc,
         ALUSrc, ShifterSrc, ALUControl,
-        MemtoReg, PCSrc, MemWrite,
-        be, ALUFlags, PC, Instr,
+        MemtoReg, PCSrc, MemWrite, Branch,
+        ALUFlags, PC, Instr,
         ALUResult, WriteData, ReadData);
 
 endmodule

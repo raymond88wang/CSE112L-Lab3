@@ -16,7 +16,14 @@ module regfile(
 
 
     always_ff @(posedge clk)
-        if (we3) rf[wa3] <= wd3;
+        if (we3) begin
+			if(ra1 == 4'b1111) begin
+				rf[13] <= r14;
+			end
+			else begin
+				rf[wa3] <= wd3;
+			end
+		end
 
     assign rd1 = (ra1 == 4'b1111) ? r15 : rf[ra1];
     assign rd2 = (ra2 == 4'b1111) ? r15 : rf[ra2];

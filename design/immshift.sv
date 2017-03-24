@@ -1,5 +1,5 @@
 module immshift(
-    input logic [4:0] shift_imm,
+    input logic [3:0] shift_imm,
 	input logic [1:0] shift_control,
 	input logic [31:0] Rm,
 	output logic [31:0] Rd,
