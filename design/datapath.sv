@@ -17,19 +17,22 @@ module datapath(
     output logic [31:0] ALUResult, WriteData,
     input logic [31:0] ReadData);
 
-	logic PCSrcE, RegWriteE, MemtoRegE, MemWriteE, ALUControlE, BranchE, ALUSrcE, FlagWriteE, CondE, ALUFlagsE, ShifterSrcE, PCSrcF, RegWriteF, MemWriteF, BranchF, ALUFlagsF, PCSrcM, RegWriteM, MemtoRegM, MemWriteM, MemtoRegW;
+	logic PCSrcE, RegWriteE, MemtoRegE, MemWriteE, BranchE, ALUSrcE, ShifterSrcE, 
+	PCSrcF, RegWriteF, MemWriteF, BranchF, 
+	PCSrcM, RegWriteM, MemtoRegM, MemWriteM, 
+	PCSrcW, MemtoRegW;
 		  
     logic [31:0] PCNext, PCPlus4, PCPlus8, InstrD, SrcAE, SrcAEt, SrcBE, ExtImmE, WriteDataE, WriteDataEt, WriteDataM, ALUResultM, ResultW, ReadDataW, ALUResultW, BranchResultW;
     logic [31:0] ExtImm, SrcA, Rd, Rs, BranchResult;
 	logic [31:0] Result;
-    logic [3:0] RA1, RA2, ShifterFlags, AFlags, BranchFlags, WA3E, WA3M, WA3W;
+    logic [3:0] RA1, RA2, ShifterFlags, AFlags, BranchFlags, WA3E, WA3M, WA3W, ALUFlagsF, ALUControlE, CondE, ALUFlagsE;
 	
 	logic Match_1E_W, Match_1E_M, Match_2E_W, Match_2E_M, Match_12D_E;
-	logic [1:0] ForwardAE, ForwardBE, LDRstall, StallF, StallD, FlushE;
+	logic [1:0] ForwardAE, ForwardBE, LDRstall, StallF, StallD, FlushE, FlagWriteE;
 
 
     // next PC logic
-    mux2 #(32) pcmux(PCPlus4, ResultToPc, PCSrcW, PCNext);
+    mux2 #(32) pcmux(PCPlus4, ResultW, PCSrcW, PCNext);
     flopr #(32) pcreg(clk, reset, PCNext, PC);
     adder #(32) pcadd1(1'b0, PC, 32'b100, PCPlus4);
     adder #(32) pcadd2(1'b0, PCPlus4, 32'b100, PCPlus8);
