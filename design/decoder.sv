@@ -21,12 +21,12 @@ module decoder(
 			casex(Op)
 				2'b00:
 					begin
-						RegSrc = Funct[0] ? 2'b00 : 2'b10; // {LDRH, LDRSB, LDRSH} : STRH
+						RegSrc = 2'b10;
 						ImmSrc = 2'b00;
 						ALUSrc = Funct[2]; // Immediate : Register
 						MemtoReg = 1'b0;
-						RegW = Funct[0]; // {LDRH, LDRSB, LDRSH} : STRH
-						MemW = ~Funct[0]; // {LDRH, LDRSB, LDRSH} : STRH
+						RegW = 1'b1; // {LDRH, LDRSB, LDRSH} : STRH
+						MemW = 1'b0; // {LDRH, LDRSB, LDRSH} : STRH
 						Branch = 1'b0;
 						ALUOp = 1'b1;
 						ShifterSrc = (Funct[4:1] == 4'b1101) ? 1'b1 : 1'b0;
@@ -39,6 +39,8 @@ module decoder(
 									// STRH
 									begin
 										be = 4'b0100;
+										RegW = 1'b0;
+										MemW = 1'b1;
 									end
 								else
 									// LDRH
@@ -68,7 +70,7 @@ module decoder(
 					end
 				2'b01:
 					begin
-						RegSrc = Funct[0] ? 2'b00 : 2'b10; // LDR : STR
+						RegSrc = Funct[0] ? 2'b00 : 2'b01; // LDR : STR
 						ImmSrc = {2'b0, ~Funct[5]};
 						ALUSrc = ~Funct[5];
 						MemtoReg = 1'b1;
