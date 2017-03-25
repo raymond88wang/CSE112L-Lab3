@@ -47,10 +47,10 @@
 
 \begin{document}
 \title{EECS112L Organization of Digital Computers Lab}
-\author{\textbf{Lab 2} \textbf{Single-cycle ARM Datapath and Control - Complete} \\ \\
+\author{\textbf{Final Project} \textbf{Pipeline ARM} \\ \\
 Group name: Three Musketeers \\ \\ Group ID: 118 \\ \\ Student name: \\ Raymond Wang \\ Jared Lim\\ Heyang Chen \\ \\ Student ID: \\17769107~\\31633414~\\55554499~\\ \\ 
 EECS Department\\ Henry Samueli School of Engineering \\ University of California, Irvine \\ \\
-{February, 28, 2017}} 
+{March, 24, 2017}} 
 
 
 \date{}
@@ -60,26 +60,39 @@ EECS Department\\ Henry Samueli School of Engineering \\ University of Californi
 
 \section{Description of this Lab}
 
-In this lab, We started from the basis of last lab and adding more features including data processing instructions, branch and link, and byte-size store/load instruction.
+In this lab, We implemented a five stage pipeline processor according to the single cycle ARM processor we designed in last lab.
 
 \section{Block Diagram}
 
+This is the block diagram of the single cycle processor from last time.
+\newline
 \includegraphics[width=1.0\textwidth]{SingleCycleProcessor.pdf}
+\newline
+This is the block diagram of pipeline processor with control.
+\newline
+\includegraphics[width=1.0\textwidth]{Blockdiagramwithpp.png}
+\newline
+This is the block diagram that able to handle hazard control including forwarding and stalling.
+\newline
+\includegraphics[width=1.0\textwidth]{Blockdiagramwithhu.png}
+\newline
+These block diagrams for pipeline processor did not include features like shifter or PCPlus4toR14, but they are actually the same
+as the block diagram in single cycle processor. This hand drawn block diagram shows what it should be although it may not be very clear.
+\newline
+\includegraphics[width=1.0\textwidth]{hdbd.jpg}
 
 \section{Design Architecture}
 
-In designing this lab, we followed ideas mainly from supplement reference book and ARM manual provided by TA. First of all, we designed branch and link. As shown in the block diagram, we designed a new module of 4-way multiplexer and have PCPlus4 input this 4-way multiplexer and then goes into Register 14 on register file. 
+For the design of five stage pipeline processor, it is separated in three steps as indicated in project description.
 \newline
-Then for the immediate-shifted and register-shifted register instruction. We actually create a new shift register, get the shift done there and then push to multiplexer before ALU. In this way, it won't make ALU become confusing and having a whole lot of new input/output in ALU. We first having Instr[11:8] input into regfile as Ra4 and get the Rs by given Rs = R15[Ra4] which is the register shift amount. Then Instr[25] comes into shift as I bit deciding whether it is Mov or the rest shift operation. Then Instr[4] decide whether it is a immediate shift or register shift. Since we have shift done before going into ALU, we also have shifter output ShifterFlags similar to ALUFlags. Then adding a ShifterSrc to decoder in order to decide in the multiplexer on which flags we are using to input into condlogic as ALUFlags.
+First of all, we have designed four pipeline registers, which separate a single cycle processor into five stages, Fetch, Decode, Execute, Memory, and Writeback. These pipeline registers takes not only logics coming out from modules such as regfile, ALU but also takes control signals. Also in this step, we have the conditional logic separated from its formal place control unit but put it individually in execute  stage as conditional unit.
 \newline
-For ALU, we have changed based on the design of last time and making operation code from 2 bits to 4 bits in order to support all the data-processing instructions. All of the design follows the table given in lab description.
+In the second stage, we design a hazard unit, which takes signal regwrite at both memory stage and writeback stage, and also 4 matching signals. Then it output ForwardAE and ForwardBE, which are signals to use in two 4 way multiplexer to decide whether the result can be directly forward back to use as SrcA or SrcB.
 \newline
-For store byte, store half, load byte and load half, we made changes in decoder as well as controller. We added a 4 bit Byte-enable(be) and output that with different value according to different situation generating by operation code, operation code2, Funct[5] and Funct[2].
+At last, we edited hazard unit by adding one more matching signal input, and memtoreg signal at execute stage into it, while also having it output StallF, StallD and FlushE. When these signals are received in pipeline register, the pipeline register will stall the current situation and add NOP into it. When stall ends, the pipeline register will work again.
 
 \section{Simulation Waveform}
 
-
-\section{Examine the Correctness}
 
 
 
