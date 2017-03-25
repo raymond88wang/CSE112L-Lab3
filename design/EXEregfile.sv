@@ -1,4 +1,4 @@
-module EXregfile(
+module EXEregfile(
 	input logic clk,
 	//Controls
 	input logic PCSrcF,
@@ -11,13 +11,21 @@ module EXregfile(
 	output logic MemWriteM,
 	
 	//Relays
-    input logic [31:0] ALUResult, WriteData, MEMResult,
-    output logic [31:0] ALUResultE, WriteDataE, EXEResult);
+    input logic [31:0] ALUResult, 
+	input logic [31:0] WriteData, 
+	input logic [3:0] WA3E,
+    output logic [31:0] ALUOutM, 
+	output logic [31:0] WriteDataE, 
+	output logic [3:0] WA3M);
 
     always_ff @(posedge clk)
 		begin
-			ALUOutM = ALUResultE;
-			WriteDatao = WriteDataE;
-			Resulto = Resulti;
+			PCSrcM = PCSrcF;
+			RegWriteM = RegWriteF;
+			MemtoRegM = MemtoRegF;
+			MemWriteM = MemWriteF;
+			ALUOutM = ALUResult;
+			WriteDataE = WriteData;
+			WA3M = WA3E;
 		end
 endmodule

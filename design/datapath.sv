@@ -17,17 +17,15 @@ module datapath(
     output logic [31:0] ALUResult, WriteData,
     input logic [31:0] ReadData);
 
-	logic PCSrcE, RegWriteE, MemtoRegE, MemWriteE, ALUControlE, BranchE, ALUSrcE, FlagWriteE, CondE, ALUFlagsE, ShifterSrcE,
-		  SrcAE, SrcBE, ExtImmE, , WA3E
-		  SrcBF, PCSrcF, RegWriteF, MemWriteF, BranchF, ALUFlagsF,
-		  PCSrcM, RegWriteM, MemtoRegM, MemWriteM, ALUResultM, WriteDataM, WA3M,
-		  ResultW, ReadDataW, ALUResultW, BranchResultW, MemtoRegW, WA3W;
+	logic PCSrcE, RegWriteE, MemtoRegE, MemWriteE, ALUControlE, BranchE, ALUSrcE, FlagWriteE, CondE, ALUFlagsE, ShifterSrcE, PCSrcF, RegWriteF, MemWriteF, BranchF, ALUFlagsF, PCSrcM, RegWriteM, MemtoRegM, MemWriteM, MemtoRegW;
 		  
-    logic [31:0] PCNext, PCPlus4, PCPlus8, InstrD;
+    logic [31:0] PCNext, PCPlus4, PCPlus8, InstrD, SrcAE, SrcAEt, SrcBE, ExtImmE, WriteDataE, WriteDataEt, WriteDataM, ALUResultM, ResultW, ReadDataW, ALUResultW, BranchResultW;
     logic [31:0] ExtImm, SrcA, Rd, Rs, BranchResult;
 	logic [31:0] Result;
-    logic [3:0] RA1, RA2, ShifterFlags, AFlags, BranchFlags;
+    logic [3:0] RA1, RA2, ShifterFlags, AFlags, BranchFlags, WA3E, WA3M, WA3W;
 	
+	logic Match_1E_W, Match_1E_M, Match_2E_W, Match_2E_M, Match_12D_E;
+	logic [1:0] ForwardAE, ForwardBE, LDRstall, StallF, StallD, FlushE;
 
 
     // next PC logic
@@ -44,22 +42,24 @@ module datapath(
         WA3W, InstrD[11:8], ResultW, PCPlus8, PCPlus4,
         SrcA, WriteData, Rs);
     extend ext(InstrD[23:0], ImmSrc, ExtImm);
-	//IDregfile IDrf(clk, PCSrc, RegWrite, MemtoReg, MemWrite, ALUControl, Branch, ALUSrc, FlagWrite, InstrD[31:28], ALUFlagsF, ShifterSrc,
+	IDregfile IDrf(clk, PCSrc, RegWrite, MemtoReg, MemWrite, ALUControl, Branch, ALUSrc, FlagWrite, InstrD[31:28], ALUFlagsF, ShifterSrc,
 						PCSrcE, RegWriteE, MemtoRegE, MemWriteE, ALUControlE, BranchE, ALUSrcE, FlagWriteE, CondE, ALUFlagsE, ShifterSrcE,
-						//SrcA, WriteData, ExtImm, , InstrD[15:12], 
-						//SrcAE, SrcBE, ExtImmE, , WA3E);
-	//shifter shifter(InstrOut[25:0], WriteData, Rs, Rd, ShifterFlags);
+						SrcA, WriteData, ExtImm, InstrD[15:12], 
+						SrcAEt, WriteDataEt, ExtImmE, WA3E);
+	shifter shifter(InstrD[25:0], WriteDataEt, Rs, Rd, ShifterFlags);
 	condlogic cl(clk, reset, CondE, ALUFlags, FlagWriteE,
 				PCSrcE, RegWriteE, MemWriteE, BranchE, ALUFlagsE, 
 				PCSrcF, RegWriteF, MemWriteF, BranchF, ALUFlagsF);
 
     // ALU logic
-    mux2 #(32) srcbmux(Rd, ExtImm, ALUSrc, SrcBF);
-    alu alu(SrcAE, SrcBF, ALUControlE, ALUResult, AFlags);
+	mux4 #(32) srcaemux(SrcAEt, ResultW, ALUResultM, ForwardAE, SrcAE);
+	mux4 #(32) srcbemux(Rd, ResultW, ALUResultM, ForwardAE, WriteDataE);
+    mux2 #(32) srcbmux(WriteDataE, ExtImm, ALUSrc, SrcBE);
+    alu alu(SrcAE, SrcBE, ALUControlE, ALUResult, ALUFlags);
 	//mux2 #(4) flagsmux(ShifterFlags, AFlags, ShifterSrcE, ALUFlags);
 	EXEregfile EXErf(clk, PCSrcF, RegWriteF, MemtoRegE, MemWriteF,
 						  PCSrcM, RegWriteM, MemtoRegM, MemWriteM,
-						  ALUResult, WriteData, WA3E,
+						  ALUResult, WriteDataE, WA3E,
 						  ALUResultM, WriteDataM, WA3M);
 	
 	immshift branchshift(4'b0010, 2'b00, ALUResultM, BranchResult, BranchFlags);
@@ -69,4 +69,14 @@ module datapath(
 						  Result, ALUResultM, BranchResult, WA3M,
 						  ReadDataW, ALUResultW, BranchResultW, WA3W);
     mux2 #(32) resultmux(ALUResultW, ReadDataW, MemtoRegW, ResultW);
+	
+	assign Match_1E_M = (SrcAE == WA3M)? 1:0;
+	assign Match_1E_W = (SrcAE == WA3W)? 1:0;
+	assign Match_2E_M = (WriteDataE == WA3M)? 1:0;
+	assign Match_2E_W = (WriteDataE == WA3W)? 1:0;
+	
+	assign Match_12D_E = ((SrcAE == WA3E) | (WriteDataE == WA3E))? 1:0;
+	
+	HazardUnit hu(Match_1E_W, Match_1E_M, Match_2E_W, Match_2E_M, Match_12D_E, MemtoRegE, RegWriteM, ForwardAE, ForwardBE, LDRstall, StallF, StallD, FlushE);
+	
 endmodule

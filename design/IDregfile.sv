@@ -22,39 +22,38 @@ module IDregfile(
 	output logic [1:0] FlagWriteE,
 	output logic [3:0] CondE,
 	output logic [3:0] ALUFlagsE,
-	output logic ShifterSrcE
+	output logic ShifterSrcE,
 	
 	//Relays
     input logic [31:0] SrcA,
 	input logic [31:0] WriteData, 
 	input logic [31:0] ExtImm, 
-	input logic [31:0] Rs,
-	input logic [3:0] WA3,
+	//input logic [31:0] Rs,
+	input logic [3:0] WA3D,
     output logic [31:0] SrcAE, 
 	output logic [31:0] SrcBE, 
 	output logic [31:0] ExtImmE, 
-	output logic [31:0] RsE,
+	//output logic [31:0] RsE,
 	output logic [3:0] WA3E);
 
     always_ff @(posedge clk)
 		begin
 			//Controls
-			PCSrcE = PCSrc,
-			RegWrite,
-			MemtoRegE = MemtoReg,
-			MemWriteE = MemWrite,
-			ALUControlE = ALUControl,
-			BranchE = Branch,
-			ALUSrcE = ALUSrc,
-			FlagWE = FlagW,
-			CondE = Cond,
-			ALUFlagsE = ALUFlags,
+			PCSrcE = PCSrc;
+			RegWriteE = RegWrite;
+			MemtoRegE = MemtoReg;
+			MemWriteE = MemWrite;
+			ALUControlE = ALUControl;
+			BranchE = Branch;
+			ALUSrcE = ALUSrc;
+			FlagWriteE = FlagWrite;
+			CondE = Cond;
+			ALUFlagsE = ALUFlagsF;
 			
 			//Relays
 			SrcAE = SrcA;
 			SrcBE = WriteData;
 			WA3E = WA3D;
 			ExtImmE = ExtImm;
-			Resulto = Resulti;
 		end
 endmodule

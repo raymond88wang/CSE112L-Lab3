@@ -20,8 +20,12 @@ module MEMregfile(
 
     always_ff @(posedge clk)
 		begin
-			ReadDataW = ReadData;
-			ALUOutW = ALUOutM;
+			PCSrcW = PCSrcM;
+			RegWriteW = RegWriteM;
+			MemtoRegW = MemtoRegM;
+			ReadDataW = Result;
+			ALUResultW = ALUResultM;
+			BranchResultW = BranchResult;
 			WA3W = WA3M;
 		end
 endmodule
