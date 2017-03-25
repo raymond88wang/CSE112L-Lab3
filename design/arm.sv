@@ -9,17 +9,17 @@ module arm(
 
     logic [3:0] ALUFlags;
     logic RegWrite, ALUSrc, MemtoReg, PCSrc, ShifterSrc, Branch;
-    logic [1:0] RegSrc, ImmSrc;
+    logic [1:0] RegSrc, ImmSrc, FlagWrite;
 	logic [3:0] ALUControl;
 
     controller c(clk, reset, Instr[31:0], ALUFlags,
         RegSrc, RegWrite, ImmSrc,
         ALUSrc, ShifterSrc, ALUControl,
-        MemWrite, MemtoReg, PCSrc, be, branch);
+        MemWrite, MemtoReg, FlagWrite, PCSrc, be, branch);
     datapath dp(clk, reset,
         RegSrc, RegWrite, ImmSrc,
         ALUSrc, ShifterSrc, ALUControl,
-        MemtoReg, PCSrc, MemWrite, Branch,
+        MemtoReg, PCSrc, FlagWrite, MemWrite, Branch,
         ALUFlags, PC, Instr,
         ALUResult, WriteData, ReadData);
 

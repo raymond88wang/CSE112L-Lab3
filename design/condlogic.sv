@@ -3,8 +3,10 @@ module condlogic(
     input logic [3:0] Cond,
     input logic [3:0] ALUFlags,
     input logic [1:0] FlagW,
-    input logic PCS, RegW, MemW,
-    output logic PCSrc, RegWrite, MemWrite
+    input logic PCSrcE, RegWriteE, MemWriteE, BranchE
+	input logic [3:0] ALUFlagsE,
+    output logic PCSrcF, RegWriteF, MemWriteF, BranchF
+	output logic [3:0] ALUFlagsF
     );
 
     logic [1:0] FlagWrite;
@@ -19,8 +21,9 @@ module condlogic(
     // write controls are conditional
     condcheck cc(Cond, Flags, CondEx);
     assign FlagWrite = FlagW & {2{CondEx}};
-    assign RegWrite = RegW & CondEx;
-    assign MemWrite = MemW & CondEx;
-    assign PCSrc = PCS & CondEx;
+	assign PCSrcF = (PCS & CondEx) | (BranchE & CondEx);
+    assign RegWriteF = RegW & CondEx;
+    assign MemWriteF = MemW & CondEx;
+	assign BranchF = BranchE & CondEx;
 endmodule
 
