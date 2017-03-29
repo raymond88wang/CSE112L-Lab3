@@ -5,6 +5,6 @@ module IFregfile(
 
     always_ff @(posedge clk)
 		begin
-			InstrD = InstrF;
+			InstrD <= InstrF;
 		end
 endmodule

@@ -15,7 +15,7 @@ module controller(
 	output logic Branch);
 
     decoder dec(Instr[27:26], Instr[25:20], Instr[15:12], Instr[6:5], Instr[1:0], {Instr[7],Instr[4]},
-        Branch, be, FlagWrite, PCS, RegW, MemW,
+        Branch, be, FlagWrite, PCSrc, RegW, MemW,
         MemtoReg, ALUSrc, ShifterSrc, ImmSrc, RegSrc, ALUControl);
 
 endmodule

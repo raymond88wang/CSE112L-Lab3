@@ -39,21 +39,21 @@ module IDregfile(
     always_ff @(posedge clk)
 		begin
 			//Controls
-			PCSrcE = PCSrc;
-			RegWriteE = RegWrite;
-			MemtoRegE = MemtoReg;
-			MemWriteE = MemWrite;
-			ALUControlE = ALUControl;
-			BranchE = Branch;
-			ALUSrcE = ALUSrc;
-			FlagWriteE = FlagWrite;
-			CondE = Cond;
-			ALUFlagsE = ALUFlagsF;
+			PCSrcE <= PCSrc;
+			RegWriteE <= RegWrite;
+			MemtoRegE <= MemtoReg;
+			MemWriteE <= MemWrite;
+			ALUControlE <= ALUControl;
+			BranchE <= Branch;
+			ALUSrcE <= ALUSrc;
+			FlagWriteE <= FlagWrite;
+			CondE <= Cond;
+			ALUFlagsE <= ALUFlagsF;
 			
 			//Relays
-			SrcAE = SrcA;
-			SrcBE = WriteData;
-			WA3E = WA3D;
-			ExtImmE = ExtImm;
+			SrcAE <= SrcA;
+			SrcBE <= WriteData;
+			WA3E <= WA3D;
+			ExtImmE <= ExtImm;
 		end
 endmodule
