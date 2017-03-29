@@ -20,12 +20,12 @@ module EXEregfile(
 
     always_ff @(posedge clk)
 		begin
-			PCSrcM = PCSrcF;
-			RegWriteM = RegWriteF;
-			MemtoRegM = MemtoRegF;
-			MemWriteM = MemWriteF;
-			ALUOutM = ALUResult;
-			WriteDataE = WriteData;
-			WA3M = WA3E;
+			PCSrcM <= PCSrcF;
+			RegWriteM <= RegWriteF;
+			MemtoRegM <= MemtoRegF;
+			MemWriteM <= MemWriteF;
+			ALUOutM <= ALUResult;
+			WriteDataE <= WriteData;
+			WA3M <= WA3E;
 		end
 endmodule
